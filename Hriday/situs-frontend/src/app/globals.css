@@ -22,3 +22,36 @@ body {
     @apply border-white/10;
   }
 }
+
+/* 
+  ===========================================
+  Google Translate Override Styles
+  ===========================================
+*/
+.goog-te-banner-frame.skiptranslate,
+.goog-te-gadget-icon,
+img.goog-te-gadget-icon,
+#goog-gt-tt,
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+}
+
+body {
+  top: 0px !important;
+}
+
+.goog-te-gadget {
+  font-family: var(--font-body) !important;
+  color: transparent !important;
+}
+
+.goog-te-gadget .goog-te-combo {
+  color: #2d3429 !important;
+  border-radius: 8px !important;
+  padding: 8px !important;
+  border: 1px solid #e5e5e5 !important;
+  outline: none !important;
+  margin: 0 !important;
+  cursor: pointer;
+}

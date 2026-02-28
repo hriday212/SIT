@@ -4,9 +4,11 @@ import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Menu, X, ArrowRight, Wallet, CreditCard, Target, FileText, Info, ShieldCheck, Store, LogOut, User, Sprout } from "lucide-react"
+import { Menu, X, ArrowRight, Wallet, CreditCard, Target, FileText, Info, ShieldCheck, Store, LogOut, User, Sprout, Link2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/AuthContext"
+import { ethers } from "ethers"
+import GoogleTranslate from "./GoogleTranslate"
 
 const MAIN_LINKS = [
     { name: "Home", href: "/", public: true },
@@ -21,6 +23,7 @@ const MENU_LINKS = [
     { name: "Loan Portal", href: "/dashboard/kcc", icon: Wallet, desc: "Agri-Business & Crop Loans." },
     { name: "Marketplace", href: "/marketplace", icon: Store, desc: "Buy verified seeds and tools." },
     { name: "Document Vault", href: "/dashboard/vault", icon: FileText, desc: "Secure digital locker." },
+    { name: "Blockchain Center", href: "/dashboard/explorer", icon: ShieldCheck, desc: "Live decentralized data explorer." },
 ]
 
 export function NavBar() {
@@ -29,6 +32,7 @@ export function NavBar() {
     const { isAuthenticated, user, logout } = useAuth()
     const [isScrolled, setIsScrolled] = useState(false)
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [walletAddress, setWalletAddress] = useState<string | null>(null)
 
     // Only apply aggressive scroll-hiding on the home page (for the video)
     const isHomePage = pathname === "/"
@@ -57,6 +61,21 @@ export function NavBar() {
     const handleLogout = () => {
         logout()
         router.push("/")
+    }
+
+    const connectWallet = async () => {
+        if (typeof window.ethereum !== "undefined") {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (accounts.length > 0) {
+                    setWalletAddress(accounts[0]);
+                }
+            } catch (error) {
+                console.error("User rejected request", error);
+            }
+        } else {
+            alert("Please install MetaMask to use Web3 features.");
+        }
     }
 
     return (
@@ -130,6 +149,21 @@ export function NavBar() {
                                 Login <ArrowRight size={14} />
                             </Link>
                         )}
+
+                        {/* Connect Wallet Button */}
+                        <div className="hidden md:flex items-center gap-4">
+                            <GoogleTranslate />
+                            <button
+                                onClick={connectWallet}
+                                className={cn(
+                                    "px-4 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all items-center gap-2 border",
+                                    walletAddress ? "bg-[#7c9473]/10 text-[#7c9473] border-[#7c9473]/30" : "bg-white text-[#2d3429] border-neutral-200 hover:border-[#2d3429]"
+                                )}
+                            >
+                                <Link2 size={14} className={walletAddress ? "text-[#7c9473]" : "text-neutral-400"} />
+                                {walletAddress ? `${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}` : "Connect Wallet"}
+                            </button>
+                        </div>
 
                         {/* Hamburger Button */}
                         <button
